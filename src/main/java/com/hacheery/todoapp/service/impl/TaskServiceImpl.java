@@ -1,6 +1,7 @@
 package com.hacheery.todoapp.service.impl;
 
 import com.hacheery.todoapp.entity.Task;
+import com.hacheery.todoapp.enums.EPriority;
 import com.hacheery.todoapp.enums.ETaskStatus;
 import com.hacheery.todoapp.repository.TaskRepository;
 import com.hacheery.todoapp.service.TaskService;
@@ -56,27 +57,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findTasksByStatus(ETaskStatus status) {
-        return List.of();
-    }
-
-    @Override
-    public List<Task> findTasksByAssignee(Long assigneeId) {
-        return List.of();
-    }
-
-    @Override
-    public void completeTask(Long taskId) {
-
-    }
-
-    @Override
-    public void reopenTask(Long taskId) {
-
-    }
-
-    @Override
-    public void assignTaskToUser(Long taskId, Long userId) {
-
+    public List<Task> findTasksByFilter(
+            ETaskStatus status, Long assigneeId, Boolean completed, EPriority priority
+    ) {
+        return taskRepository.findTasksByFilter(status, assigneeId, completed, priority);
     }
 }

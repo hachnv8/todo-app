@@ -1,6 +1,8 @@
 package com.hacheery.todoapp.controller;
 
 import com.hacheery.todoapp.entity.Task;
+import com.hacheery.todoapp.enums.EPriority;
+import com.hacheery.todoapp.enums.ETaskStatus;
 import com.hacheery.todoapp.payload.response.ApiResponse;
 import com.hacheery.todoapp.service.impl.TaskServiceImpl;
 import jakarta.validation.Valid;
@@ -26,6 +28,18 @@ public class TaskController {
                 true,
                 "Tasks retrieved successfully",
                 tasks,
+                HttpStatus.OK.value()
+        );
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<Task>> getTaskById(@PathVariable Long id) {
+        Task task = taskService.getTaskById(id);
+        ApiResponse<Task> response = new ApiResponse<>(
+                true,
+                "Task retrieved successfully",
+                task,
                 HttpStatus.OK.value()
         );
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -64,15 +78,20 @@ public class TaskController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Task>> getTaskById(@PathVariable Long id) {
-        Task task = taskService.getTaskById(id);
-        ApiResponse<Task> response = new ApiResponse<>(
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<Task>>> findTasksByFilter(
+            @RequestParam(required = false) ETaskStatus status,
+            @RequestParam(required = false) Long assigneeId,
+            @RequestParam(required = false) Boolean completed,
+            @RequestParam(required = false) EPriority priority
+    ) {
+        List<Task> tasks = taskService.findTasksByFilter(status, assigneeId, completed, priority);
+
+        ApiResponse<List<Task>> response = new ApiResponse<>(
                 true,
-                "Task retrieved successfully",
-                task,
-                HttpStatus.OK.value()
-        );
+                "Tasks retrieved successfully",
+                tasks,
+                HttpStatus.OK.value());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
