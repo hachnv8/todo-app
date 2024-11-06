@@ -7,12 +7,12 @@ import com.hacheery.todoapp.payload.response.ApiResponse;
 import com.hacheery.todoapp.service.impl.TaskServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,9 +22,12 @@ public class TaskController {
     private final TaskServiceImpl taskService;
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<Task>>> getAllTasks() {
-        List<Task> tasks = taskService.getAllTasks();
-        ApiResponse<List<Task>> response = new ApiResponse<>(
+    public ResponseEntity<ApiResponse<Page<Task>>> getAllTasks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Task> tasks = taskService.getAllTasks(page, size);
+        ApiResponse<Page<Task>> response = new ApiResponse<>(
                 true,
                 "Tasks retrieved successfully",
                 tasks,
@@ -79,15 +82,19 @@ public class TaskController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<ApiResponse<List<Task>>> findTasksByFilter(
+    public ResponseEntity<ApiResponse<Page<Task>>> findTasksByFilter(
             @RequestParam(required = false) ETaskStatus status,
             @RequestParam(required = false) Long assigneeId,
             @RequestParam(required = false) Boolean completed,
-            @RequestParam(required = false) EPriority priority
+            @RequestParam(required = false) EPriority priority,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        List<Task> tasks = taskService.findTasksByFilter(status, assigneeId, completed, priority);
+        Page<Task> tasks = taskService.findTasksByFilter(
+                status, assigneeId, completed,
+                priority, page, size);
 
-        ApiResponse<List<Task>> response = new ApiResponse<>(
+        ApiResponse<Page<Task>> response = new ApiResponse<>(
                 true,
                 "Tasks retrieved successfully",
                 tasks,

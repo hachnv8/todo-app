@@ -7,10 +7,11 @@ import com.hacheery.todoapp.repository.TaskRepository;
 import com.hacheery.todoapp.service.TaskService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
-
-import java.util.List;
 
 @Service
 @Validated // Annotation để kích hoạt validation trong service layer
@@ -32,8 +33,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> getAllTasks() {
-        return taskRepository.findAll();
+    public Page<Task> getAllTasks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findAll(pageable);
     }
 
     @Override
@@ -57,9 +59,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<Task> findTasksByFilter(
-            ETaskStatus status, Long assigneeId, Boolean completed, EPriority priority
+    public Page<Task> findTasksByFilter(
+            ETaskStatus status, Long assigneeId, Boolean completed,
+            EPriority priority, int page, int size
     ) {
-        return taskRepository.findTasksByFilter(status, assigneeId, completed, priority);
+        Pageable pageable = PageRequest.of(page, size);
+        return taskRepository.findTasksByFilter(status, assigneeId, completed, priority, pageable);
     }
 }

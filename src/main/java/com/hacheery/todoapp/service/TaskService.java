@@ -3,8 +3,7 @@ package com.hacheery.todoapp.service;
 import com.hacheery.todoapp.entity.Task;
 import com.hacheery.todoapp.enums.EPriority;
 import com.hacheery.todoapp.enums.ETaskStatus;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface TaskService {
 
@@ -12,11 +11,14 @@ public interface TaskService {
 
     Task getTaskById(Long taskId);
 
-    List<Task> getAllTasks();
+    Page<Task> getAllTasks(int page, int size);
 
     Task updateTask(Long taskId, Task taskDetails);
 
     void deleteTask(Long taskId);
 
-    List<Task> findTasksByFilter(ETaskStatus status, Long assigneeId, Boolean completed, EPriority priority);
+    Page<Task> findTasksByFilter(
+            ETaskStatus status, Long assigneeId, Boolean completed,
+            EPriority priority, int page, int size
+    );
 }
